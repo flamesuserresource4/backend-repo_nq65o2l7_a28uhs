@@ -11,8 +11,8 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional, Literal
 
 # Example schemas (replace with your own):
 
@@ -37,6 +37,19 @@ class Product(BaseModel):
     price: float = Field(..., ge=0, description="Price in dollars")
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
+
+# Orders: used to store purchase history and verification status
+class Order(BaseModel):
+    """
+    Orders collection schema
+    Collection name: "order" (lowercase of class name)
+    """
+    email: EmailStr = Field(..., description="Buyer email")
+    plan: Literal['ebook', 'kelas', 'template'] = Field(..., description="Purchased plan")
+    payment_method: Literal['DANA', 'OVO', 'GOPAY', 'BRI'] = Field(..., description="Selected payment method")
+    proof_image: Optional[str] = Field(None, description="Base64 data URL of payment proof image (optional)")
+    status: Literal['pending', 'submitted', 'verified', 'rejected'] = Field('pending', description="Verification status")
+    note: Optional[str] = Field(None, description="Internal notes or automated checks")
 
 # Add your own schemas here:
 # --------------------------------------------------
